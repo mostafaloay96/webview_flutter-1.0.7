@@ -226,67 +226,7 @@ final class InputAwareWebView extends WebView {
     return super.onTouchEvent(event);
   }
 
-  @Override
-  public ActionMode startActionMode(ActionMode.Callback callback) {
-    return rebuildActionMode(super.startActionMode(callback), callback);
-  }
-
-  @Override
-  public ActionMode startActionMode(ActionMode.Callback callback, int type) {
-    return rebuildActionMode(super.startActionMode(callback, type), callback);
-  }
-
   LinearLayout floatingActionView;
-
-  private ActionMode rebuildActionMode(
-          final ActionMode actionMode, final ActionMode.Callback callback) {
-    if (floatingActionView != null) {
-      this.removeView(floatingActionView);
-      floatingActionView = null;
-    }
-    floatingActionView =
-            (LinearLayout)
-                    LayoutInflater.from(getContext()).inflate(R.layout.floating_action_mode, null);
-    for (int i = 0; i < actionMode.getMenu().size(); i++) {
-      final MenuItem menu = actionMode.getMenu().getItem(i);
-      TextView text =
-              (TextView)
-                      LayoutInflater.from(getContext()).inflate(R.layout.floating_action_mode_item, null);
-      text.setText(menu.getTitle());
-      floatingActionView.addView(text);
-      text.setOnClickListener(
-              new OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                  InputAwareWebView.this.removeView(floatingActionView);
-                  floatingActionView = null;
-                  callback.onActionItemClicked(actionMode, menu);
-                }
-              });
-      // supports up to 4
-      if (i >= 4) break;
-    }
-
-    final int x = (int) ev.getX();
-    final int y = (int) ev.getY();
-    floatingActionView
-            .getViewTreeObserver()
-            .addOnGlobalLayoutListener(
-                    new ViewTreeObserver.OnGlobalLayoutListener() {
-                      @Override
-                      public void onGlobalLayout() {
-                        if (Build.VERSION.SDK_INT >= 16) {
-                          floatingActionView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                        } else {
-                          floatingActionView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
-                        }
-                        onFloatingActionGlobalLayout(x, y);
-                      }
-                    });
-    this.addView(floatingActionView, new AbsoluteLayout.LayoutParams(-2, -2, x, y));
-    actionMode.getMenu().clear();
-    return actionMode;
-  }
 
   private void onFloatingActionGlobalLayout(int x, int y) {
     int maxWidth = InputAwareWebView.this.getWidth();
