@@ -57,11 +57,13 @@ public class newActivity extends Activity {
     
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+            && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
+            {
                 return true;
             } else {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         READ_EXTERNAL_STORAGE_Code);
                 return false;
             }
@@ -114,10 +116,10 @@ public class newActivity extends Activity {
                         try {
                             Bitmap bitmap = (Bitmap) bundle.get("data");
                             uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
-                            ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                          /*  ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                             String path = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "Title", null);
-                            //Uri lUri = Uri.parse(path);
+                            Uri lUri = Uri.parse(path);*/
                             Uri[] results = new Uri[]{uri};
                             mUploadMessages.onReceiveValue(results);
                         }catch (Exception e){
